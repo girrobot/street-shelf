@@ -6,6 +6,7 @@ import { MapPin, Loader2, Upload, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-hot-toast';
 import { Library } from '@/types';
+import { createClient } from '@/utils/supabase/client';
 
 const LocationPicker = dynamic(() => import('./LocationPicker'), {
     ssr: false,
@@ -20,7 +21,22 @@ interface AddLibraryFormProps {
 
 export default function AddLibraryForm({ onClose, userLocation, initialData }: AddLibraryFormProps) {
     const router = useRouter();
+    const supabase = createClient();
     const [loading, setLoading] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [checkingAuth, setCheckingAuth] = useState(true);
+
+    useEffect(() => {
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setIsAuthenticated(true);
+            }
+            setCheckingAuth(false);
+        }
+        checkAuth();
+    }, [supabase]);
+
     const [position, setPosition] = useState<[number, number]>(
         initialData ? [initialData.latitude, initialData.longitude] : (userLocation || [-33.8688, 151.2093])
     );
@@ -28,6 +44,7 @@ export default function AddLibraryForm({ onClose, userLocation, initialData }: A
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!isAuthenticated) return;
         setLoading(true);
 
         const formData = new FormData(e.currentTarget);
@@ -82,6 +99,32 @@ export default function AddLibraryForm({ onClose, userLocation, initialData }: A
             });
         }
     };
+
+    if (checkingAuth) {
+        return null; // Or a spinner
+    }
+
+    if (!isAuthenticated) {
+        return (
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white w-full max-w-sm rounded-2xl p-6 text-center">
+                    <h2 className="text-xl font-bold mb-2">Sign in Required</h2>
+                    <p className="text-gray-600 mb-6">You need to be signed in to add or edit a library.</p>
+                    <div className="flex gap-3 justify-center">
+                        <button onClick={onClose} className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg">
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => router.push('/login')}
+                            className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">

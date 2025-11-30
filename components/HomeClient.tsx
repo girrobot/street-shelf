@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Library } from '@/types';
 import LibraryList from './LibraryList';
 import AddLibraryForm from './AddLibraryForm';
+import AuthButton from './AuthButton';
 import { Plus } from 'lucide-react';
 
 // Dynamic import for Map to avoid SSR issues with Leaflet
@@ -35,6 +36,9 @@ export default function HomeClient({ initialLibraries }: HomeClientProps) {
 
     return (
         <main className="h-screen flex flex-col relative bg-gray-50">
+            <div className="absolute top-4 right-4 z-20">
+                <AuthButton />
+            </div>
             <div className="flex-1 relative z-0">
                 <Map libraries={libraries} userLocation={userLocation} />
             </div>

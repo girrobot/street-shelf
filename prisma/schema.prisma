@@ -3,8 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id
+  email     String    @unique
+  libraries Library[]
+  createdAt DateTime  @default(now())
 }
 
 model Library {
@@ -15,4 +22,6 @@ model Library {
   longitude   Float
   photoUrl    String
   createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
 }
