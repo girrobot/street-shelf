@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "name": "Sunny Side Street Library",
+    "description": "A lovely little library on the corner.",
+    "latitude": -33.8688,
+    "longitude": 151.2093,
+    "photoUrl": "",
+    "createdAt": "2023-10-26T12:00:00Z"
+  }
+]
