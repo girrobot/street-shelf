@@ -16,7 +16,7 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ initialLibraries }: HomeClientProps) {
-    const [libraries, setLibraries] = useState<Library[]>(initialLibraries);
+    const libraries = initialLibraries;
     const [showAddForm, setShowAddForm] = useState(false);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
