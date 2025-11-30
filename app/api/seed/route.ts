@@ -13,6 +13,18 @@ export async function GET() {
         const fileContent = fs.readFileSync(dataFilePath, 'utf8');
         const libraries = JSON.parse(fileContent);
 
+        // Create a seed user if not exists
+        const SEED_USER_ID = '00000000-0000-0000-0000-000000000000'; // System User ID
+
+        await prisma.user.upsert({
+            where: { id: SEED_USER_ID },
+            update: {},
+            create: {
+                id: SEED_USER_ID,
+                email: 'system@streetshelf.app',
+            },
+        });
+
         let count = 0;
         for (const lib of libraries) {
             await prisma.library.create({
@@ -22,6 +34,7 @@ export async function GET() {
                     latitude: lib.latitude,
                     longitude: lib.longitude,
                     photoUrl: lib.photoUrl,
+                    userId: SEED_USER_ID,
                 },
             });
             count++;
