@@ -2,6 +2,8 @@ import HomeClient from '@/components/HomeClient';
 import { Library } from '@/types';
 import { headers } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 async function getLibraries(): Promise<Library[]> {
   try {
     const host = (await headers()).get('host');
